@@ -10,7 +10,7 @@ class AboutDialog(QDialog):
 	def __init__(self,parent=None):
 		super(AboutDialog,self).__init__(parent)
 		self.resize(425,300) #设置窗口大小
-		self.move(1200,300)
+		self.center()
 		self.setWindowTitle(self.tr("关于应用"))
 		#设置图标
 		micon = QtGui.QIcon()
@@ -51,7 +51,7 @@ class AboutDialog(QDialog):
 		self.mainLayout.addWidget(self.sixthLabel)
 
 		#seventhLabel
-		self.seventhLabel = QLabel(self.tr("关于我"))
+		self.seventhLabel = QLabel(self.tr("关于我:一个爱马刺的程序员"))
 		self.mainLayout.addWidget(self.seventhLabel)
 
 		#eiththLabel
@@ -66,12 +66,18 @@ class AboutDialog(QDialog):
 		self.tenthLabel = QLabel(self.tr('*码云: <a href="https://gitee.com/gospursgo1996" style="color:#0000ff;"><b> https://gitee.com/gospursgo1996 </b></a>'))
 		self.mainLayout.addWidget(self.tenthLabel)
 
+	def center(self):  
+		screen =QtGui.QDesktopWidget().screenGeometry()  
+		size = self.geometry()  
+		self.move(screen.width() * 3 / 4,    
+		(screen.height() - size.height()) / 2)
+
 
 class SetupDialog(QDialog):
 	def __init__(self,parent=None):
 		super(SetupDialog,self).__init__(parent)
 		#self.resize(425,300) #设置窗口大小
-		self.move(600,200)
+		self.center()
 		self.setWindowTitle(self.tr("配置参数"))
 		#设置图标
 		micon = QtGui.QIcon()
@@ -186,6 +192,12 @@ class SetupDialog(QDialog):
 		#信号与槽
 		self.connect(self.savePushButton,QtCore.SIGNAL('clicked()'),self.savePara)
 		self.loadParaToView()
+
+	def center(self):  
+		screen =QtGui.QDesktopWidget().screenGeometry()  
+		size = self.geometry()  
+		self.move((screen.width() - size.width()) / 2,    
+		(screen.height() - size.height()) / 2)
 
 	def savePara(self):
 		self.settings = QSettings("QingFeng","Drcom")

@@ -82,7 +82,7 @@ class LoginedFlagThread(QtCore.QThread):
 	def run(self):
 		global succeedFlag, stopFlag
 		time.sleep(10)
-		exit_code = os.system('ping www.baidu.com')
+		exit_code = os.system('ping www.baidu.com >NUL 2>NUL')
 		if exit_code:
 			print "wrong"
 			stopFlag = True 

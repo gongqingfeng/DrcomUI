@@ -102,6 +102,7 @@ class MainWindow(QMainWindow):
 		self.connect(self.exitPushButton,QtCore.SIGNAL('clicked()'),qApp.quit)
 
 		self.show()
+		self.center()
 
 	def trayclick(self,res):
 		if res == QSystemTrayIcon.DoubleClick: #注意此处不能判断Trigger
@@ -144,6 +145,12 @@ class MainWindow(QMainWindow):
 		self.host_ipValueLabel.setText(self.stateList[1])
 		self.serverValueLabel.setText(self.stateList[2]) 
 		self.dnsValueLabel.setText(self.stateList[3])
+
+	def center(self):  
+		screen =QtGui.QDesktopWidget().screenGeometry()  
+		size = self.geometry()  
+		self.move(screen.width() * 3 / 4,    
+		(screen.height() - size.height()) / 2)
 
 def main():
 	app=QApplication(sys.argv)

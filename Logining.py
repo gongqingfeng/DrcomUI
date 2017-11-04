@@ -66,7 +66,7 @@ class LoginingWindow(QMainWindow):
 
 		#头像
 		self.iconLabel=QLabel()
-		self.icon=QPixmap("images/python_72px.ico")
+		self.icon=QPixmap("images/python_128px.ico")
 		self.iconLabel.setPixmap(self.icon)
 		self.iconLabel.resize(self.icon.width(),self.icon.height())
 		self.bottomLayout.addWidget(self.iconLabel, 0, 0, Qt.AlignHCenter)
