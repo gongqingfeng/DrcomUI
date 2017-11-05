@@ -309,15 +309,8 @@ def changePath(path):
 def main():
 	app=QApplication(sys.argv)
 	getRealPath()
-	#欢迎界面
-	splash=QSplashScreen(QPixmap(changePath("images/huxi3.png")))
-	splash.show()
-	QThread.sleep(2)
-	#app.processEvents()
 	#登陆界面
 	loginWindow = LoginWindow()
-	splash.finish(loginWindow)
-
 	app.exec_()	
 if __name__ == '__main__':
 	main()

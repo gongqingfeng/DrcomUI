@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['Main.py'],
-             pathex=['/Users/gongqingfeng/coder/codes/DrcomUI'],
+             pathex=['/home/gongqingfeng/DrcomUI'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -18,20 +18,12 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          exclude_binaries=True,
+          a.binaries,
+          a.zipfiles,
+          a.datas,
           name='Main',
           debug=False,
           strip=False,
           upx=True,
-          console=False , icon='/Users/gongqingfeng/coder/codes/DrcomUI/images/python_128px.ico')
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas,
-               strip=False,
-               upx=True,
-               name='Main')
-app = BUNDLE(coll,
-             name='Main.app',
-             icon='/Users/gongqingfeng/coder/codes/DrcomUI/images/python_128px.ico',
-             bundle_identifier=None)
+          runtime_tmpdir=None,
+          console=False )
