@@ -3,18 +3,19 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import sys
+import sys, platform, os
 QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
-
+absPath = ""
 class AboutDialog(QDialog):
 	def __init__(self,parent=None):
 		super(AboutDialog,self).__init__(parent)
 		self.resize(425,300) #设置窗口大小
 		self.center()
 		self.setWindowTitle(self.tr("关于应用"))
+		getRealPath()
 		#设置图标
-		micon = QtGui.QIcon()
-		micon.addPixmap(QtGui.QPixmap("images/python_128px.ico"),
+		micon = QtGui.QIcon() 
+		micon.addPixmap(QtGui.QPixmap(changePath("images/python_128px.ico")),
 			QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.setWindowIcon(micon)
 		#只显示关闭按钮
@@ -81,7 +82,7 @@ class SetupDialog(QDialog):
 		self.setWindowTitle(self.tr("配置参数"))
 		#设置图标
 		micon = QtGui.QIcon()
-		micon.addPixmap(QtGui.QPixmap("images/python_128px.ico"),
+		micon.addPixmap(QtGui.QPixmap(changePath("images/python_128px.ico")),
 			QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.setWindowIcon(micon)
 		#只显示关闭按钮
@@ -230,6 +231,25 @@ class SetupDialog(QDialog):
 			self.macLineEdit.setText(self.settings.value("mac").toString())
 			self.host_osLineEdit.setText(self.settings.value("host_os").toString())
 			self.keep_alive_versionLineEdit.setText(self.settings.value("keep_alive_version").toString())
+
+def getRealPath():
+	global absPath
+	if platform.system() == "Windows":
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0])).decode('gbk').encode('utf-8')
+		#print absPath
+	else:
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0]))
+		#print absPath
+
+def changePath(path):
+	global absPath
+	if platform.system() == "Windows":
+		path = absPath + "\\" + path
+		#print path
+	else:
+		path = absPath + "/" + path
+		#print path
+	return path
 
 def main():
 	app = QApplication(sys.argv)

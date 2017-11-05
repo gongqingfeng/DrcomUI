@@ -3,7 +3,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import sys, time
+import sys, time, platform, os
 from M_Dialog import AboutDialog
 from DrcomThread import LoginedFlagThread
 from Failed import FailedWindow
@@ -13,15 +13,17 @@ password = ""
 rememberpassword = False
 autologin = False
 
+absPath = ""
 class LoginingWindow(QMainWindow):
 	def __init__(self,parent=None):
 		global username, password, rememberpassword, autologin, firstFlag
 		super(LoginingWindow,self).__init__(parent)
 		self.resize(425,300) #设置窗口大小
 		self.setWindowTitle(self.tr("登陆中..."))
+		getRealPath()
 		#设置图标
-		micon = QtGui.QIcon()
-		micon.addPixmap(QtGui.QPixmap("images/python_128px.ico"),
+		micon = QtGui.QIcon() 
+		micon.addPixmap(QtGui.QPixmap(changePath("images/python_128px.ico")),
 			QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.setWindowIcon(micon)
 		#禁止最大化按钮
@@ -32,7 +34,7 @@ class LoginingWindow(QMainWindow):
 
 		#系统托盘
 		self.tray = QtGui.QSystemTrayIcon()
-		self.trayIcon = QtGui.QIcon('images/python_128px')
+		self.trayIcon = QtGui.QIcon(changePath("images/python_128px.ico"))
 		self.tray.setIcon(self.trayIcon)
 		self.tray.show()
 		# 在系统托盘区域的图标被点击就会触发activated连接的函数
@@ -56,7 +58,7 @@ class LoginingWindow(QMainWindow):
 		self.topLayout = QVBoxLayout()
 		self.mainLayout.addLayout(self.topLayout)
 		self.bannerLabel=QLabel()
-		self.banner=QPixmap("images/huxi.jpg")
+		self.banner=QPixmap(changePath("images/huxi.jpg"))
 		self.bannerLabel.setPixmap(self.banner)
 		self.topLayout.addWidget(self.bannerLabel)
 		
@@ -65,8 +67,8 @@ class LoginingWindow(QMainWindow):
 		self.mainLayout.addLayout(self.bottomLayout)
 
 		#头像
-		self.iconLabel=QLabel()
-		self.icon=QPixmap("images/python_128px.ico")
+		self.iconLabel=QLabel() 
+		self.icon=QPixmap(changePath("images/python_72px.ico"))
 		self.iconLabel.setPixmap(self.icon)
 		self.iconLabel.resize(self.icon.width(),self.icon.height())
 		self.bottomLayout.addWidget(self.iconLabel, 0, 0, Qt.AlignHCenter)
@@ -132,7 +134,24 @@ class LoginingWindow(QMainWindow):
 			self.failedWindow.setSavedWindow(self)
 			#当前界面和托盘消失
 			self.closeCurrentWindow()
-			
+def getRealPath():
+	global absPath
+	if platform.system() == "Windows":
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0])).decode('gbk').encode('utf-8')
+		#print absPath
+	else:
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0]))
+		#print absPath
+
+def changePath(path):
+	global absPath
+	if platform.system() == "Windows":
+		path = absPath + "\\" + path
+		#print path
+	else:
+		path = absPath + "/" + path
+		#print path
+	return path			
 
 def main():
 	app=QApplication(sys.argv)

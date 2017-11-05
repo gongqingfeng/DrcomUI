@@ -22,15 +22,11 @@ class LoginWindow(QMainWindow):
 	def __init__(self,parent=None):
 		global username, password, rememberpassword, autologin
 		super(LoginWindow,self).__init__(parent)
-		self.resize(425,300) #设置窗口大小
+		self.resize(425,340) #设置窗口大小
 		self.setWindowTitle(self.tr("校园网登陆客户端python版"))
 		#设置图标
 		self.micon = QtGui.QIcon()
-		if os.path.exists(changePath("images\python_128px.ico")):
-			print "exists"
-		else:
-			print "not exists"
-		self.micon.addPixmap(QtGui.QPixmap(changePath("images\python_128px.ico")),
+		self.micon.addPixmap(QtGui.QPixmap(changePath("images/python_128px.ico")),
 			QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.setWindowIcon(self.micon)
 		#禁止最大化按钮
@@ -41,7 +37,7 @@ class LoginWindow(QMainWindow):
 
 		#系统托盘
 		self.tray = QtGui.QSystemTrayIcon()
-		self.trayIcon = QtGui.QIcon(changePath("images\python_128px.ico"))
+		self.trayIcon = QtGui.QIcon(changePath("images/python_128px.ico"))
 		self.tray.setIcon(self.trayIcon)
 		self.tray.show()
 		# 在系统托盘区域的图标被点击就会触发activated连接的函数
@@ -65,10 +61,11 @@ class LoginWindow(QMainWindow):
 		self.topLayout = QVBoxLayout()
 		self.mainLayout.addLayout(self.topLayout)
 		self.bannerLabel=QLabel()
-		self.banner=QPixmap(changePath("images\huxi.jpg"))
+		self.banner=QPixmap(changePath("images/huxi.jpg"))
 		self.bannerLabel.setPixmap(self.banner)
 		self.topLayout.addWidget(self.bannerLabel)
-		
+		#self.bannerLabel.setVisible(False)
+
 		#底级布局
 		self.bottomLayout = QVBoxLayout()
 		self.mainLayout.addLayout(self.bottomLayout)
@@ -79,7 +76,7 @@ class LoginWindow(QMainWindow):
 		self.loginLayout.setMargin(20)
 		#头像
 		self.iconLabel=QLabel()
-		self.icon=QPixmap(changePath("images\python_72px.ico"))
+		self.icon=QPixmap(changePath("images/python_72px.ico"))
 		self.iconLabel.setPixmap(self.icon)
 		self.iconLabel.resize(self.icon.width(),self.icon.height())
 		self.loginLayout.addWidget(self.iconLabel)
@@ -264,7 +261,6 @@ class LoginWindow(QMainWindow):
 			self.loginingWindow.loginedDetect()
 
 	def callRunWindow(self, sendList):
-		print "sendList:",sendList
 		self.savecfg()
 		#成功登陆界面和托盘出现
 		self.mainWindow = MainWindow()
@@ -295,26 +291,26 @@ def getRealPath():
 	global absPath
 	if platform.system() == "Windows":
 		absPath = os.path.dirname(os.path.realpath(sys.argv[0])).decode('gbk').encode('utf-8')
-		print absPath
+		#print absPath
 	else:
 		absPath = os.path.dirname(os.path.realpath(sys.argv[0]))
-		print absPath
+		#print absPath
 
 def changePath(path):
 	global absPath
 	if platform.system() == "Windows":
 		path = absPath + "\\" + path
-		print path
+		#print path
 	else:
 		path = absPath + "/" + path
-		print path
+		#print path
 	return path
 
 def main():
 	app=QApplication(sys.argv)
 	getRealPath()
 	#欢迎界面
-	splash=QSplashScreen(QPixmap(changePath("images\huxi3.jpg")))
+	splash=QSplashScreen(QPixmap(changePath("images/huxi3.png")))
 	splash.show()
 	QThread.sleep(2)
 	#app.processEvents()

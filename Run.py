@@ -5,22 +5,23 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-import sys
+import sys, platform, os
 from M_Dialog import AboutDialog
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
 
-
+absPath = ""
 class MainWindow(QMainWindow):
 	def __init__(self,parent=None):
 		super(MainWindow,self).__init__(parent)
 		self.resize(280,460) #设置窗口大小
 		self.move(1500,200)
+		getRealPath()
 		#设置图标
-		micon = QtGui.QIcon()
-		micon.addPixmap(QtGui.QPixmap("images/python_128px.ico"),
+		micon = QtGui.QIcon() 
+		micon.addPixmap(QtGui.QPixmap(changePath("images/python_128px.ico")),
 			QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.setWindowIcon(micon)
 		self.stateList = []
@@ -30,7 +31,7 @@ class MainWindow(QMainWindow):
 		self.setFixedSize(self.width(), self.height())
 		#系统托盘
 		self.tray = QtGui.QSystemTrayIcon()
-		self.trayIcon = QtGui.QIcon('images/python_128px')
+		self.trayIcon = QtGui.QIcon(changePath("images/python_128px.ico"))
 		self.tray.setIcon(self.trayIcon)
 		self.tray.show()
 		self.tray.showMessage(u"提示",u"客户端正在运行",icon=1)
@@ -55,7 +56,7 @@ class MainWindow(QMainWindow):
 		self.topLayout = QVBoxLayout()
 		self.mainLayout.addLayout(self.topLayout)
 		self.bannerLabel=QLabel()
-		self.banner=QPixmap("images/huxi.jpg")
+		self.banner=QPixmap(changePath("images/huxi.jpg"))
 		self.bannerLabel.setPixmap(self.banner)
 		self.topLayout.addWidget(self.bannerLabel)
 		
@@ -151,6 +152,25 @@ class MainWindow(QMainWindow):
 		size = self.geometry()  
 		self.move(screen.width() * 3 / 4,    
 		(screen.height() - size.height()) / 2)
+
+def getRealPath():
+	global absPath
+	if platform.system() == "Windows":
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0])).decode('gbk').encode('utf-8')
+		#print absPath
+	else:
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0]))
+		#print absPath
+
+def changePath(path):
+	global absPath
+	if platform.system() == "Windows":
+		path = absPath + "\\" + path
+		#print path
+	else:
+		path = absPath + "/" + path
+		#print path
+	return path
 
 def main():
 	app=QApplication(sys.argv)

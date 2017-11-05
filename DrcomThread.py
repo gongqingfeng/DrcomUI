@@ -33,7 +33,6 @@ class LoginThread(QtCore.QThread):
 	#重写 run() 函数
 	def run(self):
 		connectNetwork(self.finishSignal, self.username, self.password)
-		print "thread dead"
 
 	def setUsernamePassword(self, username, password):
 		self.username = username
@@ -55,7 +54,6 @@ class LoginThread(QtCore.QThread):
 	def loadParaToThread(self):
 		global server, host_ip, CONTROLCHECKSTATUS, ADAPTERNUM,  IPDOG, host_name, PRIMARY_DNS, dhcp_server, AUTH_VERSION, mac, host_os, KEEP_ALIVE_VERSION 
 		self.settings = QSettings("QingFeng","Drcom")
-		print "host_ip:", host_ip
 		#确保保存一次之后才会加载数据，否则会得到空值
 		if self.settings.value("loadParaFlag").toBool() == True:
 			server = str(self.settings.value("server").toString())
@@ -84,7 +82,6 @@ class LoginedFlagThread(QtCore.QThread):
 		time.sleep(10)
 		exit_code = os.system('ping www.baidu.com >NUL 2>NUL')
 		if exit_code:
-			print "wrong"
 			stopFlag = True 
 			self.failedSignal.emit(True) 
 			
@@ -109,13 +106,9 @@ def try_socket(signal):
 		s.settimeout(3)
 		main(signal)
 	except:
-		print ("."),
 		time.sleep(0.5)
-		print ("."),
 		time.sleep(0.5)
-		print (".")
 		time.sleep(0.5)
-		print ("...reopen")
 		#time.sleep(10)
 		main(signal)
 	else:
@@ -138,7 +131,6 @@ def challenge(svr,ran):
 		data, address = s.recvfrom(1024)
 		#print('[challenge] recv',data.encode('hex'))
 	  except:
-		print('[challenge] timeout, retrying...')
 		continue
 		
 	  if address == (svr, 61440):
@@ -148,7 +140,6 @@ def challenge(svr,ran):
 	#print('[DEBUG] challenge:\n' + data.encode('hex'))
 	if data[0] != '\x02':
 	  raise ChallengeException
-	print('[challenge] challenge packet sent.')
 	return data[4:8]
 
 def md5sum(s):
@@ -205,14 +196,12 @@ def keep_alive2(*args):
 	
 	packet = keep_alive_package_builder(0,dump(ran),'\x00'*4,1,True)
 	#packet = keep_alive_package_builder(0,dump(ran),dump(ran)+'\x22\x06',1,True)
-	print ('[keep-alive2] send1')#packet.encode('hex')
 	while True:
 		s.sendto(packet, (svr, 61440))
 		data, address = s.recvfrom(1024)
 		if data.startswith('\x07'):
 			break
 		else:
-			print ('[keep-alive2] recv/unexpected',data.encode('hex'))
 			continue
 	ran += random.randint(1,10)   
 	packet = keep_alive_package_builder(1,dump(ran),'\x00'*4,1,False)
@@ -236,13 +225,11 @@ def keep_alive2(*args):
 			break
 	#print '[keep-alive2] recv3',data.encode('hex')
 	tail = data[16:20]
-	print ("[keep-alive] keep-alive loop was in daemon.")
 	i = 3
 
 	while not stopFlag :
 	  try:
 		keep_alive1(SALT,package_tail,password,server)
-		print '[keep-alive2] send'
 		ran += random.randint(1,10)   
 		packet = keep_alive_package_builder(i,dump(ran),tail,1,False)
 		#print('DEBUG: keep_alive2,packet 4\n',packet.encode('hex'))
@@ -266,8 +253,6 @@ def keep_alive2(*args):
 		time.sleep(20)
 	  except:
 		pass
-
-	print "exit "
 
 def checksum(s):
 	ret = 1234
@@ -322,7 +307,6 @@ def mkpkt(salt, usr, pwd, mac):
 
 def login(signal, usr, pwd, svr):
 	global SALT, succeedFlag, host_ip, server
-	print "login"
 	i = 0
 	while True:
 		salt = challenge(svr,time.time()+random.randint(0xF,0xFF))
@@ -332,27 +316,22 @@ def login(signal, usr, pwd, svr):
 		s.sendto(packet, (svr, 61440))
 		data, address = s.recvfrom(1024)
 		#print('[login] recv',data.encode('hex'))
-		print('[login] packet sent.')
 		if address == (svr, 61440):
 			if data[0] == '\x04':
-			  print('[login] login in')
 			  break
 			else:
 			  continue
 		else:
 			if i >= 5 and UNLIMITED_RETRY == False :
-			  print('[login] exception occured.')
 			  sys.exit(1)
 			else:
 			  continue
 			
-	print('[login] login Success')
+
 	succeedFlag = True
 	sendList = [True, host_ip, server, dhcp_server]
 	if succeedFlag == True:
-		print "emit"
 		signal.emit(sendList)
-		print "emit end"
 	return data[23:39]
 	#return data[-22:-6]
 
@@ -361,7 +340,6 @@ def keep_alive1(salt,tail,pwd,svr):
 	data = '\xff' + md5sum('\x03\x01'+salt+pwd) + '\x00\x00\x00'
 	data += tail
 	data += foo + '\x00\x00\x00\x00'
-	print '[keep_alive1] send'#data.encode('hex'))
 
 	s.sendto(data, (svr, 61440))
 	while True:
@@ -369,12 +347,11 @@ def keep_alive1(salt,tail,pwd,svr):
 		if data[0] == '\x07':
 			break
 		else:
-			print '[keep-alive1]recv/not expected'#data.encode('hex')
+			pass
 	#print('[keep-alive1] recv',data.encode('hex'))
 
 def empty_socket_buffer():
 #empty buffer
-	print('starting to empty socket buffer')
 	try:
 		while True:
 			data, address = s.recvfrom(1024)
@@ -383,15 +360,12 @@ def empty_socket_buffer():
 				break
 	except:
 		# get exception means it has done.
-		print('exception in empty_socket_buffer')
 		pass
-	print('emptyed')
 
 
 		
 def main(signal):
 	global server,username,password,host_name,host_os,dhcp_server,mac,hexip,host_ip
-	print "main"
 	while True:
 		try:
 			hexip=socket.inet_aton(host_ip)
@@ -409,17 +383,15 @@ def main(signal):
 	
 def loginpart(signal):
 	global package_tail
-	print "loginpart"
 	while not stopFlag:
 		try:
 			package_tail = login(signal, username, password, server)
 		except loginException:
 			continue
-		print('package_tail',package_tail.encode('hex'))
+
 		keeppart()
 		
 def keeppart():
-	print 'keeppart'
 	keep_alive2(SALT,package_tail,password,server)
 
 def connectNetwork(signal, temp_username, temp_password):

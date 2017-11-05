@@ -3,20 +3,21 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import sys, time
+import sys, time, platform, os
 from M_Dialog import AboutDialog
 QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
 username = ""
-
+absPath = ""
 class FailedWindow(QMainWindow):
 	def __init__(self,parent=None):
 		global username, password, rememberpassword, autologin, firstFlag
 		super(FailedWindow,self).__init__(parent)
 		self.resize(425,300) #设置窗口大小
 		self.setWindowTitle(self.tr("登陆失败"))
+		getRealPath()
 		#设置图标
 		micon = QtGui.QIcon()
-		micon.addPixmap(QtGui.QPixmap("images/python_128px.ico"),
+		micon.addPixmap(QtGui.QPixmap(changePath("images/python_128px")),
 			QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.setWindowIcon(micon)
 		#禁止最大化按钮
@@ -26,8 +27,8 @@ class FailedWindow(QMainWindow):
 		self.setFixedSize(self.width(), self.height())
 
 		#系统托盘
-		self.tray = QtGui.QSystemTrayIcon()
-		self.trayIcon = QtGui.QIcon('images/python_128px')
+		self.tray = QtGui.QSystemTrayIcon() 
+		self.trayIcon = QtGui.QIcon(changePath("images/python_128px"))
 		self.tray.setIcon(self.trayIcon)
 		self.tray.show()
 		# 在系统托盘区域的图标被点击就会触发activated连接的函数
@@ -50,8 +51,8 @@ class FailedWindow(QMainWindow):
 		#顶级布局
 		self.topLayout = QVBoxLayout()
 		self.mainLayout.addLayout(self.topLayout)
-		self.bannerLabel=QLabel()
-		self.banner=QPixmap("images/huxi.jpg")
+		self.bannerLabel=QLabel() 
+		self.banner=QPixmap(changePath("images/huxi.png"))
 		self.bannerLabel.setPixmap(self.banner)
 		self.topLayout.addWidget(self.bannerLabel)
 		
@@ -116,6 +117,24 @@ class FailedWindow(QMainWindow):
 		self.savedWindow.getSavedWindow().showCurrentWindow()
 		#当前界面和托盘消失
 		self.closeCurrentWindow()
+def getRealPath():
+	global absPath
+	if platform.system() == "Windows":
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0])).decode('gbk').encode('utf-8')
+		#print absPath
+	else:
+		absPath = os.path.dirname(os.path.realpath(sys.argv[0]))
+
+def changePath(path):
+	global absPath
+	if platform.system() == "Windows":
+		path = absPath + "\\" + path
+		#print path
+	else:
+		path = absPath + "/" + path
+		#print path
+	return path
+
 
 def main():
 	app=QApplication(sys.argv)
