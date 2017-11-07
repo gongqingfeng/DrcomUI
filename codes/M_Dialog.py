@@ -127,7 +127,7 @@ class SetupDialog(QDialog):
 
 		self.host_ipLineEdit = QLineEdit("172.24.30.34")
 		self.paraLayout.addWidget(self.host_ipLineEdit, 3, 1)
-		#print self.host_ipLineEdit.text()
+		print self.host_ipLineEdit.text()
 		#fifthLabel
 		self.fifthLabel = QLabel("ipdog")
 		self.paraLayout.addWidget(self.fifthLabel, 4, 0)
@@ -193,19 +193,16 @@ class SetupDialog(QDialog):
 
 		#信号与槽
 		self.connect(self.savePushButton,QtCore.SIGNAL('clicked()'),self.savePara)
-		self.loadParaToView()
+		
 	def center(self):  
 		screen =QtGui.QDesktopWidget().screenGeometry()  
 		size = self.geometry()  
 		self.move((screen.width() - size.width()) / 2,    
 		(screen.height() - size.height()) / 2)
 
-	def savePara(self):
-		self.settings = QSettings("QingFeng","Drcom")
-		#打开软件时
-		if self.savedWindow.firstRunFlag == True:
-			#那就保存一次
-			self.settings.setValue("loadParaFlag",QVariant(True))
+	def setDefalutPara(self):
+		self.settings = QSettings("QingFeng","Drcom1_1")
+		if self.settings.value("setDefalutParaFlag", False).toBool() == False:
 			self.settings.setValue("server",QVariant(self.serverLineEdit.text()))
 			self.settings.setValue("controlcheckstatus",QVariant(self.controlcheckstatusLineEdit.text()))
 			self.settings.setValue("adapternum",QVariant(self.adapternumLineEdit.text()))
@@ -218,47 +215,47 @@ class SetupDialog(QDialog):
 			self.settings.setValue("mac",QVariant(self.macLineEdit.text()))
 			self.settings.setValue("host_os",QVariant(self.host_osLineEdit.text()))
 			self.settings.setValue("keep_alive_version",QVariant(self.keep_alive_versionLineEdit.text()))
-			self.savedWindow.firstRunFlag = False
-		else:
-		#满足非启动软件时并且所有的值已经填写
-			if self.serverLineEdit.text() and \
-			self.controlcheckstatusLineEdit.text() and \
-			self.adapternumLineEdit.text() and \
-			self.host_ipLineEdit.text() and \
-			self.ipdogLineEdit.text() and \
-			self.host_nameLineEdit.text() and \
-			self.primary_dnsLineEdit.text() and \
-			self.dhcp_serverLineEdit.text() and \
-			self.auth_versionLineEdit.text() and \
-			self.macLineEdit.text() and \
-			self.host_osLineEdit.text() and \
-			self.keep_alive_versionLineEdit.text() and self.savedWindow.firstRunFlag == False:
-				self.settings.setValue("loadParaFlag",QVariant(True))
-				self.settings.setValue("server",QVariant(self.serverLineEdit.text()))
-				self.settings.setValue("controlcheckstatus",QVariant(self.controlcheckstatusLineEdit.text()))
-				self.settings.setValue("adapternum",QVariant(self.adapternumLineEdit.text()))
-				self.settings.setValue("host_ip",QVariant(self.host_ipLineEdit.text()))
-				self.settings.setValue("ipdog",QVariant(self.ipdogLineEdit.text()))
-				self.settings.setValue("host_name",QVariant(self.host_nameLineEdit.text()))
-				self.settings.setValue("primary_dns",QVariant(self.primary_dnsLineEdit.text()))
-				self.settings.setValue("dhcp_server",QVariant(self.dhcp_serverLineEdit.text()))
-				self.settings.setValue("auth_version",QVariant(self.auth_versionLineEdit.text()))
-				self.settings.setValue("mac",QVariant(self.macLineEdit.text()))
-				self.settings.setValue("host_os",QVariant(self.host_osLineEdit.text()))
-				self.settings.setValue("keep_alive_version",QVariant(self.keep_alive_versionLineEdit.text()))
-				#保存时就获取一个登陆ip，避免在线程里多次获取导致第二次登陆失败
-				self.savedWindow.host_ip_list = str(self.settings.value("host_ip", "172.24.30.34").toString()).split(".")
-				self.savedWindow.host_ip_list[3] = str(randint(2,200))
-				self.savedWindow.host_ip = ".".join(self.savedWindow.host_ip_list)
+			self.settings.setValue("setDefalutParaFlag",QVariant(True))
+	def savePara(self):
+		self.settings = QSettings("QingFeng","Drcom1_1")
+		#满足所有的值已经填写
+		if self.serverLineEdit.text() and \
+		self.controlcheckstatusLineEdit.text() and \
+		self.adapternumLineEdit.text() and \
+		self.host_ipLineEdit.text() and \
+		self.ipdogLineEdit.text() and \
+		self.host_nameLineEdit.text() and \
+		self.primary_dnsLineEdit.text() and \
+		self.dhcp_serverLineEdit.text() and \
+		self.auth_versionLineEdit.text() and \
+		self.macLineEdit.text() and \
+		self.host_osLineEdit.text() and \
+		self.keep_alive_versionLineEdit.text():
+			self.settings.setValue("server",QVariant(self.serverLineEdit.text()))
+			self.settings.setValue("controlcheckstatus",QVariant(self.controlcheckstatusLineEdit.text()))
+			self.settings.setValue("adapternum",QVariant(self.adapternumLineEdit.text()))
+			self.settings.setValue("host_ip",QVariant(self.host_ipLineEdit.text()))
+			self.settings.setValue("ipdog",QVariant(self.ipdogLineEdit.text()))
+			self.settings.setValue("host_name",QVariant(self.host_nameLineEdit.text()))
+			self.settings.setValue("primary_dns",QVariant(self.primary_dnsLineEdit.text()))
+			self.settings.setValue("dhcp_server",QVariant(self.dhcp_serverLineEdit.text()))
+			self.settings.setValue("auth_version",QVariant(self.auth_versionLineEdit.text()))
+			self.settings.setValue("mac",QVariant(self.macLineEdit.text()))
+			self.settings.setValue("host_os",QVariant(self.host_osLineEdit.text()))
+			self.settings.setValue("keep_alive_version",QVariant(self.keep_alive_versionLineEdit.text()))
+			#保存时就获取一个登陆ip，避免在线程里多次获取导致第二次登陆失败
+			self.savedWindow.host_ip_list = str(self.settings.value("host_ip", "172.24.30.34").toString()).split(".")
+			self.savedWindow.host_ip_list[3] = str(randint(2,200))
+			self.savedWindow.host_ip = ".".join(self.savedWindow.host_ip_list)
 
-				QMessageBox.information(self, self.tr("提示"),self.tr("保存成功!"))	
-			else:
-				QMessageBox.information(self, self.tr("提示"),self.tr("请填写完整参数!"))
+			QMessageBox.information(self, self.tr("提示"),self.tr("保存成功!"))	
+		else:
+			QMessageBox.information(self, self.tr("提示"),self.tr("请填写完整参数!"))
 
 	def loadParaToView(self):
-		self.settings = QSettings("QingFeng","Drcom")
+		self.settings = QSettings("QingFeng","Drcom1_1")
 		#确保保存一次之后才会加载数据，否则会得到空值
-		if self.settings.value("loadParaFlag").toBool() == True:
+		if self.settings.value("setDefalutParaFlag").toBool() == True:
 			self.serverLineEdit.setText(self.settings.value("server").toString()) 
 			self.controlcheckstatusLineEdit.setText(self.settings.value("controlcheckstatus").toString())
 			self.adapternumLineEdit.setText(self.settings.value("adapternum").toString())

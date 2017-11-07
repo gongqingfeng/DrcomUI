@@ -147,11 +147,12 @@ class LoginWindow(QMainWindow):
 		self.connect(self.setupPushButton,QtCore.SIGNAL('clicked()'),self.setupInfo)
 
 		#打开软件就存一次参数
-		self.settings = QSettings("QingFeng","Drcom")
+		self.settings = QSettings("QingFeng","Drcom1_1")
+		print self.settings.fileName()
 		self.setupDialog = SetupDialog()
 		self.setupDialog.setSavedWindow(self)
-		self.firstRunFlag = True
-		self.setupDialog.savePara()
+		self.setupDialog.setDefalutPara()
+		print self.settings.value("host_ip", "172.24.30.34").toString()
 
 		#打开软件时就获取一个登陆ip，避免在线程里多次获取导致第二次登陆失败
 		self.host_ip_list = str(self.settings.value("host_ip", "172.24.30.34").toString()).split(".")
@@ -169,7 +170,7 @@ class LoginWindow(QMainWindow):
 		
 	def clearInfo(self):
 		global username, password, rememberpassword, autologin
-		self.settings = QSettings("QingFeng","Drcom")
+		self.settings = QSettings("QingFeng","Drcom1_1")
 		rememberpassword = False
 		autologin = False
 		username = ""
@@ -185,6 +186,7 @@ class LoginWindow(QMainWindow):
 
 	def setupInfo(self):
 		self.setupDialog.setModal(True)   #此处ture为模态，false为非模态 ,模态时原窗口不可点击
+		self.setupDialog.loadParaToView()
 		self.setupDialog.show()
 
 	def trayclick(self, res):
@@ -218,7 +220,7 @@ class LoginWindow(QMainWindow):
 
 	def savecfg(self):
 		global username, password, rememberpassword, autologin
-		self.settings = QSettings("QingFeng","Drcom")
+		self.settings = QSettings("QingFeng","Drcom1_1")
 		self.settings.setValue("username",QVariant(username))
 		self.settings.setValue("password",QVariant(password))
 		self.settings.setValue("autologin",QVariant(autologin))
@@ -226,7 +228,7 @@ class LoginWindow(QMainWindow):
 
 	def loadcfg(self):
 		global username, password, rememberpassword, autologin
-		self.settings = QSettings("QingFeng","Drcom")
+		self.settings = QSettings("QingFeng","Drcom1_1")
 		rememberpassword = self.settings.value("rememberpassword").toBool()
 		autologin = self.settings.value("autologin").toBool()
 		if rememberpassword == True:
